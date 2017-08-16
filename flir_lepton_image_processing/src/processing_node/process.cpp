@@ -145,10 +145,10 @@ namespace flir_lepton_image_processing
     const flir_lepton_msgs::FlirLeptonBatchMsg& msg)
   {
     #ifdef DEBUG_TIME
-    Timer::start("FlirLeptonImageCallback", "", true);
+    //Timer::start("FlirLeptonImageCallback", "", true);
     #endif
 
-    ROS_INFO_NAMED(PKG_NAME, "Process node callback");
+    //ROS_INFO_NAMED(PKG_NAME, "Process node callback");
 
     cv::Mat thermalImage = selectImageToProcess(
       msg, Parameters::Thermal::detection_method);
@@ -241,8 +241,8 @@ namespace flir_lepton_image_processing
     candidateRoisPublisher_.publish(thermalCandidateRoisMsg);
 
     #ifdef DEBUG_TIME
-    Timer::tick("FlirLeptonImageCallback");
-    Timer::printAllMeansTree();
+    //Timer::tick("FlirLeptonImageCallback");
+    //Timer::printAllMeansTree();
     #endif
 
     return;

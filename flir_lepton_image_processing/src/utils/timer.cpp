@@ -272,8 +272,8 @@ void Timer::printAllMeans(void)
 
 void Timer::printAllMeansTree(void)
 {
-  ROS_INFO_STREAM_NAMED(PKG_NAME,
-    "Timers available : [curr - min , mean , max - ticks]\n");
+  //ROS_INFO_STREAM_NAMED(PKG_NAME,
+  //"Timers available : [curr - min , mean , max - ticks]\n");
   Mfs tms;
   for (MsdCIt it = mean_time.begin() ; it != mean_time.end() ; it++)
   {
