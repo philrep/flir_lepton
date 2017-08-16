@@ -7,7 +7,10 @@ A minimal installation of ROS is only required.
 
 The package has been tested under [Hydro](http://wiki.ros.org/hydro/Installation) and [Indigo](http://wiki.ros.org/indigo/Installation) releases, both armhf and x86_64 architectures.
 
- 
+## Fork
+
+Fork for development of parallel BeagleBone Black systems with simultaneous ADC sampling.
+
 ## Packages
 
 Integrated packages:
@@ -87,7 +90,7 @@ $ roslaunch flir_lepton_launchers flir_lepton.launch image_processing:=false gra
 
 We measured that maximum VoSPI frames/sec, for a stable communication, is around 25fps.
 Though, global node publishing rate of the relevant topics is independed from VoSPI frames acquisition, as this implementation uses a thread that continuously reads through the SPI interface.
-You can change node publishing rate through configuration file located under flir_lepton_sensor/config/ directory, [here](https://github.com/angetria/flir_lepton/blob/master/flir_lepton_sensor/config/params.yaml). 
+You can change node publishing rate through configuration file located under flir_lepton_sensor/config/ directory, [here](https://github.com/angetria/flir_lepton/blob/master/flir_lepton_sensor/config/params.yaml).
 Some other usefull configuration parameters are also defined into the aforementioned configuration file:
 
 - SPI interface port.
@@ -134,6 +137,6 @@ This metapackage does not include any tests. Node (package) specific tests are d
 - Angelos Triantafyllidis, [aggelostriadafillidis@gmail.com]
 
 
-## Contact 
+## Contact
 
 Angelos Triantafyllidis, [aggelostriadafillidis@gmail.com]
