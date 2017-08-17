@@ -29,8 +29,10 @@
     output="$(arg output)"
     ns="$(env ROS_BBB)">
 
-    <rosparam file="$(find flir_lepton_image_processing)/cfg/processing_node_topics.yaml"
-    command="load" />
+    <rosparam
+      file="$(find flir_lepton_image_processing)/cfg/processing_node_topics.yaml"
+      command="load"
+      ns="$(env ROS_BBB)"/>
   </node>
 
 </launch>

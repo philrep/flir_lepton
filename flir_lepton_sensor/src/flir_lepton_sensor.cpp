@@ -48,10 +48,10 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "flir_lepton_sensor_node");
   // Register Nodehandle under the /flir_lepton_sensor namespace
-  flir_lepton_sensor::FlirLeptonHWIface flirLepton("/flir_lepton_sensor");
+  flir_lepton_sensor::FlirLeptonHWIface flirLepton("flir_lepton_sensor");
 
   int rate;
-  ros::NodeHandle("/flir_lepton_sensor").param<int>(
+  ros::NodeHandle("flir_lepton_sensor").param<int>(
       "frame_rate", rate, 20);
   ros::Rate loop_rate(rate);
 

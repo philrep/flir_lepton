@@ -142,9 +142,9 @@ namespace flir_lepton
       nh_.param<std::string>("flir_urdf/camera_optical_frame", frameId_,
         "flir_optical_frame");
       nh_.param<std::string>("published_topics/flir_gray_image_topic", grayTopic_,
-                            "$(env ROS_BBB)/flir_lepton/image/gray");
+        "flir_lepton/image/gray");
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
-                             "$(env ROS_BBB)/flir_lepton/image/rgb");
+        "flir_lepton/image/rgb");
       nh_.param<std::string>("published_topics/flir_temper_topic",
         temperTopic_, "flir_lepton/temperatures");
       nh_.param<std::string>("published_topics/flir_batch_topic",
@@ -173,7 +173,7 @@ namespace flir_lepton
       speed = param;
       nh.param<int32_t>("iface/delay", param, 0);
       delay = param;
-      nh.param<std::string>("iface/device_port", devicePort, "/dev/spidev0.0");
+      nh.param<std::string>("iface/device_port", devicePort, "/dev/spidev1.0");
     }
 
     void FlirLeptonHWIface::initThreadedIO(void)
