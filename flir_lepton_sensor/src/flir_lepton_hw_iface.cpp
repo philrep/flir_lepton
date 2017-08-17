@@ -140,11 +140,11 @@ namespace flir_lepton
         calibFileUri_.c_str());
 
       nh_.param<std::string>("flir_urdf/camera_optical_frame", frameId_,
-        "/flir_optical_frame");
+        "flir_optical_frame");
       nh_.param<std::string>("published_topics/flir_gray_image_topic", grayTopic_,
-        "/flir_lepton/image/gray");
+                            "$(env ROS_BBB)/flir_lepton/image/gray");
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
-        "/flir_lepton/image/rgb");
+                             "$(env ROS_BBB)/flir_lepton/image/rgb");
       nh_.param<std::string>("published_topics/flir_temper_topic",
         temperTopic_, "flir_lepton/temperatures");
       nh_.param<std::string>("published_topics/flir_batch_topic",
@@ -335,7 +335,7 @@ namespace flir_lepton
 
     /*!
      *  @brief Process the last obtained from flir lepton VoSPI frame.
-     *  
+     *
      *  @return Void.
      */
     void FlirLeptonHWIface::processFrame(void)
