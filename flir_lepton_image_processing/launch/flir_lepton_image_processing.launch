@@ -14,6 +14,7 @@
       type="play"
       name="player"
       output="screen"
+      ns="$(env ROS_BBB)"
       args="--clock -l $(arg path)" >
     </node>
   </group>
@@ -26,7 +27,7 @@
     pkg="flir_lepton_image_processing"
     respawn="False"
     output="$(arg output)"
-    ns="$(arg namespace)">
+    ns="$(env ROS_BBB)">
 
     <rosparam file="$(find flir_lepton_image_processing)/cfg/processing_node_topics.yaml"
     command="load" />

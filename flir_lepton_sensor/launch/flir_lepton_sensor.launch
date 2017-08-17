@@ -11,14 +11,15 @@
     name="flir_lepton_sensor"
     pkg="flir_lepton_sensor"
     respawn="false"
+    ns="$(env ROS_BBB)"
     output="screen" />
 
-    
+
 <!-- Load configuration parameters yaml -->
   <rosparam
     file="$(find flir_lepton_sensor)/config/params.yaml"
     command="load"
-    ns="$(arg namespace)"
+    ns="$(env ROS_BBB)"
   />
 
   <param name="$(arg namespace)/gray_image" value="$(arg gray_image)" />
