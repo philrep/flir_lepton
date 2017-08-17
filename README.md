@@ -11,6 +11,9 @@ The package has been tested under [Hydro](http://wiki.ros.org/hydro/Installation
 
 Fork for development of parallel BeagleBone Black systems with simultaneous ADC sampling.
 
+changes:
+Namespace seperation of individual BBB
+
 ## Packages
 
 Integrated packages:
