@@ -6,6 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   sensor_msgs
   flir_lepton_msgs
+  cv_bridge
+  # OpenCV
 )
 
 find_package(Boost REQUIRED COMPONENTS thread)

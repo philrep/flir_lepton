@@ -51,15 +51,36 @@
 #include <ros/package.h>
 /* ------------------------------- */
 
+// #include <image_transport/image_transport.h>
+
+/// current exception thrown
+
+// ImageView.callback_image() while trying to convert image from '16UC1' to 'rgb8' an exception was thrown (Image is wrongly formed: height * step != size  or  60 * 160 != 4800)
+
+// cv_bridge exception: Image is wrongly formed: height * step != size  or  60 * 160 != 4800
+
+
+// mono8
+// width 24, height 1, step 80
+// moono16
+// width 24, height 1, step 160
+
+
+
 
 namespace flir_lepton
 {
   namespace flir_lepton_sensor
   {
+
     FlirLeptonHWIface::FlirLeptonHWIface(const std::string& ns):
       nh_(ns),
-      vospiFps_(25)
+      vospiFps_(25)//,
+      // it_(nh_)
+
     {
+
+
       loadParameters();
 
       calibMap_ = Utils::loadThermalCalibMap(calibFileUri_);
@@ -78,6 +99,8 @@ namespace flir_lepton
       // Custom publisher
       if(pub16Gray_)
         {
+          // image sesnor cant do 16 bit
+          // gray16Publisher_ = it_.advertise(gray16Topic_, 1);
           gray16Publisher_ = nh_.advertise<sensor_msgs::Image>(gray16Topic_, 1);
         }
 
@@ -107,12 +130,16 @@ namespace flir_lepton
       grayImage_.step = IMAGE_WIDTH * sizeof(uint8_t);
 
       // Custom image
+      // http://docs.ros.org/api/sensor_msgs/html/msg/Image.html
+      // http://docs.ros.org/api/sensor_msgs/html/image__encodings_8h.html
       gray16Image_.header.frame_id = frameId_;
       gray16Image_.height = IMAGE_HEIGHT;
       gray16Image_.width = IMAGE_WIDTH;
-      gray16Image_.encoding = "mono16";
+      gray16Image_.encoding = sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //sensor_msgs::image_encodings::MONO16;
       gray16Image_.is_bigendian = 0;
       gray16Image_.step = IMAGE_WIDTH * sizeof(uint16_t);
+      // gray16Image_.header.frame_id = frameId_;
+      // gray16Image_.encoding = "mono16";
 
 
       temperMsg_.header.frame_id = frameId_;
@@ -170,6 +197,7 @@ namespace flir_lepton
       nh_.param<std::string>("published_topics/flir_batch_topic",
         batchTopic_, "flir_lepton/batch");
       nh_.param<bool>("gray_image", pubGray_, true);
+
       // custom bool
       nh_.param<bool>("gray16_image", pub16Gray_, true);
 
@@ -377,6 +405,10 @@ namespace flir_lepton
       uint16_t minVal, maxVal;
       uint8_t red = 0, green = 0, blue = 0;
 
+      uint16_t image16Val;
+      now_ = ros::Time::now();
+
+
       /* -------------------------------------------------------------------- */
       mtxLock_.lock();
       memcpy(lastFrame_, flirDataFrame_.frameData,
@@ -389,14 +421,32 @@ namespace flir_lepton
       // Clear previous acquired frame temperature values
       temperMsg_.values.data.clear();
       grayImage_.data.clear();
+      gray16Image_.data.clear();
+
+      // custom clear
+      // gray16Image_.data.clear();
+      // memcpy(gray16Image_, flirDataFrame_.frameData,
+      //        IMAGE_HEIGHT * IMAGE_WIDTH * sizeof(uint16_t));
+
+      // not possible
+      // gray16Image_.image = lastFrame_;
+      // gray16Image_ = cv::Mat( IMAGE_WIDTH, IMAGE_HEIGHT, "mono16", &lastFrame_);
+
       if(pubRgb_) {rgbImage_.data.clear();}
 
       for (int i = 0; i < IMAGE_WIDTH; i++) {
         for (int j = 0; j < IMAGE_HEIGHT; j++) {
+
+
+          // custom image input
+          // image16Val = lastFrame_[i * IMAGE_HEIGHT + j];
+          gray16Image_.data.push_back(lastFrame_[i * IMAGE_HEIGHT + j]);
+
           // Thermal image creation
           imageVal = Utils::signalToImageValue(
             lastFrame_[i * IMAGE_HEIGHT + j], minVal, maxVal);
           grayImage_.data.push_back(imageVal);
+
 
           if(pubRgb_)
           {
@@ -415,6 +465,9 @@ namespace flir_lepton
       }
 
       grayImage_.header.stamp = now_;
+      //custom data header
+      gray16Image_.header.stamp = now_;
+
       rgbImage_.header.stamp = now_;
       temperMsg_.header.stamp = now_;
 
