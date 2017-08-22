@@ -1,10 +1,10 @@
 published_topics:
-  flir_image_topic: /flir_lepton/image/gray
-  flir_rgb_image_topic: /flir_lepton/image/rgb
-  flir_temper_topic: /flir_lepton/temperatures
-  flir_batch_topic: /flir_lepton/batch
+  flir_image_topic: flir_lepton/image/gray
+  flir_rgb_image_topic: flir_lepton/image/rgb
+  flir_temper_topic: flir_lepton/temperatures
+  flir_batch_topic: flir_lepton/batch
 flir_urdf:
-  camera_optical_frame: /flir_lepton_optical_frame
+  camera_optical_frame: flir_lepton_optical_frame
 iface:
   device_port: "/dev/spidev1.0"
   bits: 8

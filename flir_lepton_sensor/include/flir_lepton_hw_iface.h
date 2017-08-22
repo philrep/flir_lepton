@@ -69,10 +69,10 @@ namespace flir_lepton
   {
     #define IMAGE_HEIGHT 60
     #define IMAGE_WIDTH 80
-    #define MAX_RESTART_ATTEMPS_EXIT 5 
+    #define MAX_RESTART_ATTEMPS_EXIT 5
     #define MAX_RESETS_ERROR 750
 
- 
+
     class FlirLeptonHWIface
     {
       private:
@@ -117,6 +117,11 @@ namespace flir_lepton
         std::string rgbTopic_;
         std::string temperTopic_;
         std::string batchTopic_;
+
+        /* ------< Custom Published Topics >------ */
+        std::string gray16Topic_;
+
+
         /* -------------------------------- */
 
         /* -------< ROS Publishers >------- */
@@ -125,6 +130,11 @@ namespace flir_lepton
         ros::Publisher temperPublisher_;
         ros::Publisher batchPublisher_;
         ros::Publisher raw_publisher_;
+
+        /* -------< Custom Publishers >----*/
+        ros::Publisher gray16Publisher_;
+
+
         /* -------------------------------- */
         ros::NodeHandle nh_;
         ros::Time now_;
@@ -147,6 +157,11 @@ namespace flir_lepton
         flir_lepton_msgs::FlirLeptonBatchMsg batchMsg_;
         sensor_msgs::Image grayImage_;
         sensor_msgs::Image rgbImage_;
+
+
+        /* -------------< Custom Publishing Messages >-------------- */
+        sensor_msgs::Image gray16Image_;
+
         /* -------------------------------------------------- */
 
         // Raw sensor signal values to absolute thermal values map
@@ -155,6 +170,9 @@ namespace flir_lepton
 
         bool pubGray_;
         bool pubRgb_;
+
+        /*--------< custom boo>-----*/
+        bool pub16Gray_;
 
         // Threads
         boost::thread ioThread_;

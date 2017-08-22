@@ -30,7 +30,7 @@
  * *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * *  POSSIBILITY OF SUCH DAMAGE.
+ * *  POr at 192.168.1.103 Port 80SSIBILITY OF SUCH DAMAGE.
  * *
  * * Author: Konstantinos Panayiotou, Angelos Triantafyllidis,
  * *  Tsirigotis Christos
@@ -74,6 +74,12 @@ namespace flir_lepton
       {
         grayPublisher_ = nh_.advertise<sensor_msgs::Image>(grayTopic_, 1);
       }
+
+      // Custom publisher
+      if(pub16Gray_)
+        {
+          gray16Publisher_ = nh_.advertise<sensor_msgs::Image>(gray16Topic_, 1);
+        }
 
       if(pubRgb_)
       {
@@ -140,11 +146,11 @@ namespace flir_lepton
         calibFileUri_.c_str());
 
       nh_.param<std::string>("flir_urdf/camera_optical_frame", frameId_,
-        "/flir_optical_frame");
+        "flir_optical_frame");
       nh_.param<std::string>("published_topics/flir_gray_image_topic", grayTopic_,
-        "/flir_lepton/image/gray");
+        "flir_lepton/image/gray");
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
-        "/flir_lepton/image/rgb");
+        "flir_lepton/image/rgb");
       nh_.param<std::string>("published_topics/flir_temper_topic",
         temperTopic_, "flir_lepton/temperatures");
       nh_.param<std::string>("published_topics/flir_batch_topic",
@@ -173,7 +179,7 @@ namespace flir_lepton
       speed = param;
       nh.param<int32_t>("iface/delay", param, 0);
       delay = param;
-      nh.param<std::string>("iface/device_port", devicePort, "/dev/spidev0.0");
+      nh.param<std::string>("iface/device_port", devicePort, "/dev/spidev1.0");
     }
 
     void FlirLeptonHWIface::initThreadedIO(void)
@@ -335,7 +341,7 @@ namespace flir_lepton
 
     /*!
      *  @brief Process the last obtained from flir lepton VoSPI frame.
-     *  
+     *
      *  @return Void.
      */
     void FlirLeptonHWIface::processFrame(void)

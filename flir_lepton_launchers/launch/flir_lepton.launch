@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <launch>
-  <arg name="image_processing" default="true"/>
+  <arg name="image_processing" default="false"/>
   <arg name="gray_image" default="true" />
   <arg name="rgb_image" default="true" />
 
