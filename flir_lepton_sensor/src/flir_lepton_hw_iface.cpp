@@ -106,6 +106,15 @@ namespace flir_lepton
       grayImage_.is_bigendian = 0;
       grayImage_.step = IMAGE_WIDTH * sizeof(uint8_t);
 
+      // Custom image
+      gray16Image_.header.frame_id = frameId_;
+      gray16Image_.height = IMAGE_HEIGHT;
+      gray16Image_.width = IMAGE_WIDTH;
+      gray16Image_.encoding = "mono16";
+      gray16Image_.is_bigendian = 0;
+      gray16Image_.step = IMAGE_WIDTH * sizeof(uint16_t);
+
+
       temperMsg_.header.frame_id = frameId_;
       temperMsg_.values.layout.dim.push_back(std_msgs::MultiArrayDimension());
       temperMsg_.values.layout.dim[0].size = IMAGE_HEIGHT;
@@ -149,6 +158,11 @@ namespace flir_lepton
         "flir_optical_frame");
       nh_.param<std::string>("published_topics/flir_gray_image_topic", grayTopic_,
         "flir_lepton/image/gray");
+
+      // custom param
+      nh_.param<std::string>("published_topics/flir_gray16_image_topic", gray16Topic_,
+                             "flir_lepton/image/gray16");
+
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
         "flir_lepton/image/rgb");
       nh_.param<std::string>("published_topics/flir_temper_topic",
@@ -156,6 +170,9 @@ namespace flir_lepton
       nh_.param<std::string>("published_topics/flir_batch_topic",
         batchTopic_, "flir_lepton/batch");
       nh_.param<bool>("gray_image", pubGray_, true);
+      // custom bool
+      nh_.param<bool>("gray16_image", pub16Gray_, true);
+
       nh_.param<bool>("rgb_image", pubRgb_, true);
       /* ----------------------------------------- */
 
@@ -216,6 +233,13 @@ namespace flir_lepton
       {
         grayPublisher_.publish(grayImage_);
       }
+
+      // custom publoihser
+      if(pub16Gray_)
+        {
+          gray16Publisher_.publish(gray16Image_);
+        }
+
       if(pubRgb_)
       {
         rgbPublisher_.publish(rgbImage_);
