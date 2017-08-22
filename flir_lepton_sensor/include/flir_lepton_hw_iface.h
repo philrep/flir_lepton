@@ -112,6 +112,7 @@ namespace flir_lepton
         };
 
 
+
         /* ------< Published Topics >------ */
         std::string grayTopic_;
         std::string rgbTopic_;
