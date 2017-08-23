@@ -62,11 +62,25 @@
 
 // mono8
 // width 24, height 1, step 80
+//  width 24, height 1, step 80, encoding mono8
 // moono16
 // width 24, height 1, step 160
+// width 24, height 1, step 160, encoding mono16
+// size 4800, sizeofW 24, sizeoFH 1, width 80, height 60, step 160, encoding mono16
+// cv_bridge exception: Image is wrongly formed: height * step != size  or  60 * 160 != 4800
+
+// when using mono16 and sizeof(16)
+//  size 4800, sizeofW 24, sizeoFH 1, width 80, height 60, step 160, encoding mono16, first px 252
 
 
+// when using mono8 and sizeof(8)
+// size 4800, sizeofW 24, sizeoFH 1, width 80, height 60, step 80, encoding mono8, first px 245
 
+
+// ERROR
+// image_Stream.data is 8bit and uses the last 8 bytes of the 16 byte number aka
+// 7942 == 0001111100000110
+// 6 == 00000110
 
 namespace flir_lepton
 {
@@ -135,7 +149,7 @@ namespace flir_lepton
       gray16Image_.header.frame_id = frameId_;
       gray16Image_.height = IMAGE_HEIGHT;
       gray16Image_.width = IMAGE_WIDTH;
-      gray16Image_.encoding = sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //sensor_msgs::image_encodings::MONO16;
+      gray16Image_.encoding = sensor_msgs::image_encodings::MONO16; //  sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //
       gray16Image_.is_bigendian = 0;
       gray16Image_.step = IMAGE_WIDTH * sizeof(uint16_t);
       // gray16Image_.header.frame_id = frameId_;
@@ -441,6 +455,10 @@ namespace flir_lepton
           // custom image input
           // image16Val = lastFrame_[i * IMAGE_HEIGHT + j];
           gray16Image_.data.push_back(lastFrame_[i * IMAGE_HEIGHT + j]);
+          if(j == 0 && i == 0)
+            {
+              ROS_INFO("fisrpx %u, gray1st %u", lastFrame_[i * IMAGE_HEIGHT + j], gray16Image_.data[i*IMAGE_HEIGHT+j]);
+            }
 
           // Thermal image creation
           imageVal = Utils::signalToImageValue(
