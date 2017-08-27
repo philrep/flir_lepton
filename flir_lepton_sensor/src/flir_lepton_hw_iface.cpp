@@ -110,6 +110,7 @@ namespace flir_lepton
         grayPublisher_ = nh_.advertise<sensor_msgs::Image>(grayTopic_, 1);
       }
 
+
       // Custom publisher
       if(pub16Gray_)
         {
