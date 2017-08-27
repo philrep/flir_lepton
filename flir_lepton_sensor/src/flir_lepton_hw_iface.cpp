@@ -51,6 +51,19 @@
 #include <ros/package.h>
 /* ------------------------------- */
 
+// custom msgs
+// #include "flir_lepton_msgs/Flir16bitImage.h"
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include "opencv2/imgproc/imgproc.hpp"
+#include <sensor_msgs/image_encodings.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+// #include <opencv2/imgproc.hpp>
+
 // #include <image_transport/image_transport.h>
 
 /// current exception thrown
@@ -449,16 +462,23 @@ namespace flir_lepton
 
       if(pubRgb_) {rgbImage_.data.clear();}
 
+
+      // instantiate custom message
+      // flir_lepton_msgs::Flir16bitImage img16MSG;
+      cv::Mat img16MSG(60, 80, CV_16U1);
+
       for (int i = 0; i < IMAGE_WIDTH; i++) {
         for (int j = 0; j < IMAGE_HEIGHT; j++) {
 
 
           // custom image input
           // image16Val = lastFrame_[i * IMAGE_HEIGHT + j];
-          gray16Image_.data.push_back(lastFrame_[i * IMAGE_HEIGHT + j]);
+          img16MSG.at<uchar>(i * IMAGE_HEIGHT, j) = (unsigned char)lastFrame_[i * IMAGE_HEIGHT , j];
+
           if(j == 0 && i == 0)
+
             {
-              ROS_INFO("fisrpx %u, gray1st %u", lastFrame_[i * IMAGE_HEIGHT + j], gray16Image_.data[i*IMAGE_HEIGHT+j]);
+              ROS_INFO("fisrpx %u, gray1st %u", lastFrame_[i * IMAGE_HEIGHT + j], img16MSG.data[i*IMAGE_HEIGHT, j]);
             }
 
           // Thermal image creation
