@@ -54,15 +54,6 @@
 // custom msgs
 // #include "flir_lepton_msgs/Flir16bitImage.h"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
-#include <cv_bridge/cv_bridge.h>
-#include "opencv2/imgproc/imgproc.hpp"
-#include <sensor_msgs/image_encodings.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-// #include <opencv2/imgproc.hpp>
 
 // #include <image_transport/image_transport.h>
 
@@ -130,6 +121,9 @@ namespace flir_lepton
           // image sesnor cant do 16 bit
           // gray16Publisher_ = it_.advertise(gray16Topic_, 1);
           gray16Publisher_ = nh_.advertise<sensor_msgs::Image>(gray16Topic_, 1);
+
+          // cv::Mat gray16Image_(60, 80, CV_16UC1);
+          gray16Image_.create(60, 80, CV_16UC1);
         }
 
       if(pubRgb_)
@@ -160,12 +154,12 @@ namespace flir_lepton
       // Custom image
       // http://docs.ros.org/api/sensor_msgs/html/msg/Image.html
       // http://docs.ros.org/api/sensor_msgs/html/image__encodings_8h.html
-      gray16Image_.header.frame_id = frameId_;
-      gray16Image_.height = IMAGE_HEIGHT;
-      gray16Image_.width = IMAGE_WIDTH;
-      gray16Image_.encoding = sensor_msgs::image_encodings::MONO16; //  sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //
-      gray16Image_.is_bigendian = 0;
-      gray16Image_.step = IMAGE_WIDTH * sizeof(uint16_t);
+      gray16MSG_.header.frame_id = frameId_;
+      // gray16MSG_->height = IMAGE_HEIGHT;
+      // gray16MSG_->width = IMAGE_WIDTH;
+      gray16MSG_.encoding = sensor_msgs::image_encodings::MONO16; //  sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //
+      // gray16MSG_->is_bigendian = 0;
+      // gray16MSG_->step = IMAGE_WIDTH * sizeof(uint16_t);
       // gray16Image_.header.frame_id = frameId_;
       // gray16Image_.encoding = "mono16";
 
@@ -293,7 +287,7 @@ namespace flir_lepton
       // custom publoihser
       if(pub16Gray_)
         {
-          gray16Publisher_.publish(gray16Image_);
+          gray16Publisher_.publish(gray16MSG_.toImageMsg());
         }
 
       if(pubRgb_)
@@ -424,6 +418,29 @@ namespace flir_lepton
      *
      *  @return Void.
      */
+
+    std::string type2str(int type) {
+      std::string r;
+
+      uchar depth = type & CV_MAT_DEPTH_MASK;
+      uchar chans = 1 + (type >> CV_CN_SHIFT);
+
+      switch ( depth ) {
+      case CV_8U:  r = "8U"; break;
+      case CV_8S:  r = "8S"; break;
+      case CV_16U: r = "16U"; break;
+      case CV_16S: r = "16S"; break;
+      case CV_32S: r = "32S"; break;
+      case CV_32F: r = "32F"; break;
+      case CV_64F: r = "64F"; break;
+      default:     r = "User"; break;
+      }
+
+      r += "C";
+      r += (chans+'0');
+
+      return r;
+}
     void FlirLeptonHWIface::processFrame(void)
     {
       uint8_t imageVal;
@@ -449,7 +466,8 @@ namespace flir_lepton
       // Clear previous acquired frame temperature values
       temperMsg_.values.data.clear();
       grayImage_.data.clear();
-      gray16Image_.data.clear();
+      // gray16MSG_.image.clear();
+      // gray16Image_.data.clear();
 
       // custom clear
       // gray16Image_.data.clear();
@@ -465,7 +483,7 @@ namespace flir_lepton
 
       // instantiate custom message
       // flir_lepton_msgs::Flir16bitImage img16MSG;
-      cv::Mat img16MSG(60, 80, CV_16U1);
+
 
       for (int i = 0; i < IMAGE_WIDTH; i++) {
         for (int j = 0; j < IMAGE_HEIGHT; j++) {
@@ -473,13 +491,19 @@ namespace flir_lepton
 
           // custom image input
           // image16Val = lastFrame_[i * IMAGE_HEIGHT + j];
-          img16MSG.at<uchar>(i * IMAGE_HEIGHT, j) = (unsigned char)lastFrame_[i * IMAGE_HEIGHT , j];
+          int ii = i * IMAGE_HEIGHT;
+          uint16_t pix = lastFrame_[ii + j];
+          // gray16Image_.at<uint16_t>(i * IMAGE_HEIGHT, j) = pix;
+          gray16Image_.at<uint16_t>( j, i) = pix;
 
-          if(j == 0 && i == 0)
 
-            {
-              ROS_INFO("fisrpx %u, gray1st %u", lastFrame_[i * IMAGE_HEIGHT + j], img16MSG.data[i*IMAGE_HEIGHT, j]);
-            }
+          // if(j == 0 && i == 0)
+
+          //   {
+          //     std::string ty = type2str(gray16Image_.type());
+          //     ROS_INFO("size %i, %i, %s", gray16Image_.size().height, gray16Image_.size().width, ty.c_str());
+          //     ROS_INFO("i %i, j %i, fisrpx %u, gray1st %u, pix %u", i, j, lastFrame_[i * IMAGE_HEIGHT + j], gray16Image_.at<uint16_t>(j,i), pix);
+          //   }
 
           // Thermal image creation
           imageVal = Utils::signalToImageValue(
@@ -503,9 +527,9 @@ namespace flir_lepton
         }
       }
 
-      grayImage_.header.stamp = now_;
       //custom data header
-      gray16Image_.header.stamp = now_;
+      gray16MSG_.image =  gray16Image_;
+      gray16MSG_.header.stamp = now_;
 
       rgbImage_.header.stamp = now_;
       temperMsg_.header.stamp = now_;

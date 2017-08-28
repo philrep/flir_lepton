@@ -69,6 +69,18 @@
 /* #include <opencv2/highgui/highgui.hpp> */
 /* // custom */
 /* #include <image_transport/image_transport.h> */
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include "opencv2/imgproc/imgproc.hpp"
+#include <sensor_msgs/image_encodings.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+// #include <opencv2/imgproc.hpp>
+
+#include <sensor_msgs/image_encodings.h>
+
 
 
 namespace flir_lepton
@@ -173,9 +185,11 @@ namespace flir_lepton
 
         /* -------------< Custom Publishing Messages >-------------- */
         // https://answers.ros.org/question/237802/trying-to-publish-16-bit-images-as-ros-msg/
-        sensor_msgs::Image gray16Image_;
+        cv_bridge::CvImage gray16MSG_;
         /* cv_bridge::CvImage gray16Image_; //bridge */
         /* cv_bridge::Image gray16ImageMSG_; // msg to send */
+        cv::Mat gray16Image_;
+
 
         /* -------------------------------------------------- */
 
