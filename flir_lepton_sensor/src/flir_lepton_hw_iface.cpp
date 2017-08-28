@@ -419,6 +419,7 @@ namespace flir_lepton
      *  @return Void.
      */
 
+    // https://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
     std::string type2str(int type) {
       std::string r;
 
@@ -485,16 +486,27 @@ namespace flir_lepton
       // flir_lepton_msgs::Flir16bitImage img16MSG;
 
 
-      for (int i = 0; i < IMAGE_WIDTH; i++) {
-        for (int j = 0; j < IMAGE_HEIGHT; j++) {
+
+      for (int j = 0; j < IMAGE_HEIGHT; j++){
+        for (int i = 0; i < IMAGE_WIDTH; i++){
+
+          int jj = j * IMAGE_WIDTH;
+          uint16_t pix = lastFrame_[jj + i];
+          // gray16Image_.at<uint16_t>(i * IMAGE_HEIGHT, j) = pix;
+          gray16Image_.at<uint16_t>( j, i) = pix;
+
+        }
+
+      }
+
+
+      for (int i = 0; i < IMAGE_WIDTH; i++){
+        for (int j = 0; j < IMAGE_HEIGHT; j++)
+         {
 
 
           // custom image input
           // image16Val = lastFrame_[i * IMAGE_HEIGHT + j];
-          int ii = i * IMAGE_HEIGHT;
-          uint16_t pix = lastFrame_[ii + j];
-          // gray16Image_.at<uint16_t>(i * IMAGE_HEIGHT, j) = pix;
-          gray16Image_.at<uint16_t>( j, i) = pix;
 
 
           // if(j == 0 && i == 0)
