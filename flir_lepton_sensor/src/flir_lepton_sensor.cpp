@@ -42,6 +42,11 @@
 
 #include "flir_lepton_hw_iface.h"
 
+/*----< OPenCV>---*/
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 using namespace flir_lepton;
 
 int main(int argc, char** argv)

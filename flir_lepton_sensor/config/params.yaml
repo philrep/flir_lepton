@@ -1,5 +1,6 @@
 published_topics:
   flir_image_topic: flir_lepton/image/gray
+  flir_image16_topic: flir_lepton/image/gray16
   flir_rgb_image_topic: flir_lepton/image/rgb
   flir_temper_topic: flir_lepton/temperatures
   flir_batch_topic: flir_lepton/batch

@@ -6,10 +6,24 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   sensor_msgs
   flir_lepton_msgs
+  cv_bridge
+  message_generation
+  std_msgs
+  # OpenCV
 )
 
 find_package(Boost REQUIRED COMPONENTS thread)
 
+
+add_message_files(
+  FILES
+  grey16Image.msg
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 catkin_package(
   INCLUDE_DIRS
     include
