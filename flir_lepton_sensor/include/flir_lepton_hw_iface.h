@@ -203,6 +203,9 @@ namespace flir_lepton
         /*--------< custom boo>-----*/
         bool pub16Gray_;
 
+
+        const char *fname = "/sys/bus/iio/devices/iio:device0/in_voltage0_raw";
+
         // Threads
         boost::thread ioThread_;
         boost::mutex mtxLock_;

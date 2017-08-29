@@ -313,15 +313,15 @@ namespace flir_lepton
       char adc[5] = {0};
       int len = read(fd, adc, sizeof(adc - 1));
       if(len == -1){
-        printf("error: %s\n", strerror(errno));
+        ROS_INFO("error: %s\n", strerror(errno));
         exit(1);
       }
       else if(len == 0){
-        printf("%s\n", "buffer is empty");
+        ROS_INFO("%s\n", "buffer is empty");
       }
       else{
         adc[len] ='\0';
-        printf("%s ", adc);
+        ROS_INFO("%s ", adc);
       }
     }
 
@@ -351,6 +351,19 @@ namespace flir_lepton
         begin = boost::posix_time::microsec_clock::local_time();
         try
         {
+
+
+          // custom ADC
+          // grab ADC0 right before camera integration
+          int fd = open(fname, O_RDONLY);
+          if(fd == -1){
+            ROS_INFO("error: %s\n", strerror(errno));
+            exit(1);
+          }
+          read_adc(fd);
+          close(fd);
+          //
+
           restarts = 0;
           for (uint16_t i = 0; i < packetsPerFrame; i++)
           {
@@ -396,6 +409,9 @@ namespace flir_lepton
           uint16_t cleanDataCount = 0;
           maxVal = 0;
           minVal = -1;
+
+
+
 
           // Process this acquired from spi port, frame and create the data vector
           for (int i = 0; i < frameSize16; i++)
