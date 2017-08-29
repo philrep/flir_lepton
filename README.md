@@ -13,6 +13,8 @@ Fork for development of parallel BeagleBone Black systems with simultaneous ADC 
 
 changes:
 Namespace seperation of individual BBB
+Addition of 16bit Mono Image topic (requires  sudo apt-get install ros-indigo-image-transport)
+
 
 ## Packages
 
