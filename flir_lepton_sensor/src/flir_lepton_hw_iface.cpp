@@ -23,7 +23,7 @@
  * *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
  * *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * *  COPYRIGHT fatal error: image_transport/image_transport.h: No such file or directoryOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -50,6 +50,14 @@
 #include <linux/spi/spidev.h>
 #include <ros/package.h>
 /* ------------------------------- */
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <cstring>
+
 
 // custom msgs
 // #include "flir_lepton_msgs/Flir16bitImage.h"
@@ -297,6 +305,24 @@ namespace flir_lepton
       temperPublisher_.publish(temperMsg_);
       batchPublisher_.publish(batchMsg_);
       /* ------------------------------------ */
+    }
+
+    // custom adc reader
+    void read_adc(int fd)
+    {
+      char adc[5] = {0};
+      int len = read(fd, adc, sizeof(adc - 1));
+      if(len == -1){
+        printf("error: %s\n", strerror(errno));
+        exit(1);
+      }
+      else if(len == 0){
+        printf("%s\n", "buffer is empty");
+      }
+      else{
+        adc[len] ='\0';
+        printf("%s ", adc);
+      }
     }
 
 
