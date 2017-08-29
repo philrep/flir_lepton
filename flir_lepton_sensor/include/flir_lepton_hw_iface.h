@@ -55,6 +55,7 @@
 /* ---< ROS related >--- */
 #include "ros/ros.h"
 #include "sensor_msgs/Image.h"
+#include "sensor_msgs/Temperature.h"
 #include "sensor_msgs/image_encodings.h"
 #include "flir_lepton_msgs/TemperaturesMsg.h"
 #include "flir_lepton_msgs/FlirLeptonBatchMsg.h"
@@ -141,6 +142,7 @@ namespace flir_lepton
 
         /* ------< Custom Published Topics >------ */
         std::string gray16Topic_;
+        std::string adcTopic_;
 
 
         /* -------------------------------- */
@@ -154,6 +156,7 @@ namespace flir_lepton
 
         /* -------< Custom Publishers >----*/
         ros::Publisher gray16Publisher_;
+        ros::Publisher adcPublisher_;
         // custom
         /* image_transport::ImageTransport it_; */
         /* image_transport::Publisher gray16Publisher_; */
@@ -189,6 +192,7 @@ namespace flir_lepton
         /* cv_bridge::CvImage gray16Image_; //bridge */
         /* cv_bridge::Image gray16ImageMSG_; // msg to send */
         cv::Mat gray16Image_;
+        sensor_msgs::Temperature adcMSG_;
 
 
         /* -------------------------------------------------- */

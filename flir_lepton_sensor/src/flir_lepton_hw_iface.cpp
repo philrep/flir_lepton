@@ -129,6 +129,7 @@ namespace flir_lepton
           // image sesnor cant do 16 bit
           // gray16Publisher_ = it_.advertise(gray16Topic_, 1);
           gray16Publisher_ = nh_.advertise<sensor_msgs::Image>(gray16Topic_, 1);
+          adcPublisher_ = nh_.advertise<sensor_msgs::Temperature>(adcTopic_, 1);
 
           // cv::Mat gray16Image_(60, 80, CV_16UC1);
           gray16Image_.create(60, 80, CV_16UC1);
@@ -163,13 +164,8 @@ namespace flir_lepton
       // http://docs.ros.org/api/sensor_msgs/html/msg/Image.html
       // http://docs.ros.org/api/sensor_msgs/html/image__encodings_8h.html
       gray16MSG_.header.frame_id = frameId_;
-      // gray16MSG_->height = IMAGE_HEIGHT;
-      // gray16MSG_->width = IMAGE_WIDTH;
       gray16MSG_.encoding = sensor_msgs::image_encodings::MONO16; //  sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //
-      // gray16MSG_->is_bigendian = 0;
-      // gray16MSG_->step = IMAGE_WIDTH * sizeof(uint16_t);
-      // gray16Image_.header.frame_id = frameId_;
-      // gray16Image_.encoding = "mono16";
+      adcMSG_.header.frame_id = frameId_;
 
 
       temperMsg_.header.frame_id = frameId_;
@@ -296,6 +292,7 @@ namespace flir_lepton
       if(pub16Gray_)
         {
           gray16Publisher_.publish(gray16MSG_.toImageMsg());
+          adcPublisher_.publish(adcMSG_);
         }
 
       if(pubRgb_)
@@ -584,6 +581,7 @@ namespace flir_lepton
       //custom data header
       gray16MSG_.image =  gray16Image_;
       gray16MSG_.header.stamp = now_;
+      adcMSG_.header.stamp = now_;
 
       rgbImage_.header.stamp = now_;
       temperMsg_.header.stamp = now_;
