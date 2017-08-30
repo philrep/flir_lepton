@@ -214,6 +214,7 @@ namespace flir_lepton
         boost::thread ioThread_;
         boost::mutex mtxLock_;
 
+        void read_adc(int);
 
         /*!
          * @brief Loads parameters from parameter server

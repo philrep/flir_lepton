@@ -61,7 +61,7 @@
 
 // custom msgs
 // #include "flir_lepton_msgs/Flir16bitImage.h"
-
+#include <stdlib.h>     /* atof */
 
 // #include <image_transport/image_transport.h>
 
@@ -216,6 +216,9 @@ namespace flir_lepton
       nh_.param<std::string>("published_topics/flir_gray16_image_topic", gray16Topic_,
                              "flir_lepton/image/gray16");
 
+      nh_.param<std::string>("published_topics/bbb_adc_topic", adcTopic_,
+                             "flir_lepton/adc/voltage0");
+
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
         "flir_lepton/image/rgb");
       nh_.param<std::string>("published_topics/flir_temper_topic",
@@ -305,7 +308,7 @@ namespace flir_lepton
     }
 
     // custom adc reader
-    void read_adc(int fd)
+    void FlirLeptonHWIface::read_adc(int fd)
     {
       char adc[5] = {0};
       int len = read(fd, adc, sizeof(adc - 1));
@@ -319,6 +322,8 @@ namespace flir_lepton
       else{
         adc[len] ='\0';
         ROS_INFO("%s ", adc);
+
+        adcMSG_.temperature = atof(adc);
       }
     }
 
