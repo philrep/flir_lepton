@@ -23,7 +23,7 @@
  * *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
  * *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * *  COPYRIGHT fatal error: image_transport/image_transport.h: No such file or directoryOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -50,10 +50,18 @@
 #include <linux/spi/spidev.h>
 #include <ros/package.h>
 /* ------------------------------- */
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <cstring>
+
 
 // custom msgs
 // #include "flir_lepton_msgs/Flir16bitImage.h"
-
+#include <stdlib.h>     /* atof */
 
 // #include <image_transport/image_transport.h>
 
@@ -121,6 +129,7 @@ namespace flir_lepton
           // image sesnor cant do 16 bit
           // gray16Publisher_ = it_.advertise(gray16Topic_, 1);
           gray16Publisher_ = nh_.advertise<sensor_msgs::Image>(gray16Topic_, 1);
+          adcPublisher_ = nh_.advertise<sensor_msgs::Temperature>(adcTopic_, 1);
 
           // cv::Mat gray16Image_(60, 80, CV_16UC1);
           gray16Image_.create(60, 80, CV_16UC1);
@@ -155,13 +164,8 @@ namespace flir_lepton
       // http://docs.ros.org/api/sensor_msgs/html/msg/Image.html
       // http://docs.ros.org/api/sensor_msgs/html/image__encodings_8h.html
       gray16MSG_.header.frame_id = frameId_;
-      // gray16MSG_->height = IMAGE_HEIGHT;
-      // gray16MSG_->width = IMAGE_WIDTH;
       gray16MSG_.encoding = sensor_msgs::image_encodings::MONO16; //  sensor_msgs::image_encodings::TYPE_16UC1;// "mono16"; //
-      // gray16MSG_->is_bigendian = 0;
-      // gray16MSG_->step = IMAGE_WIDTH * sizeof(uint16_t);
-      // gray16Image_.header.frame_id = frameId_;
-      // gray16Image_.encoding = "mono16";
+      adcMSG_.header.frame_id = frameId_;
 
 
       temperMsg_.header.frame_id = frameId_;
@@ -211,6 +215,9 @@ namespace flir_lepton
       // custom param
       nh_.param<std::string>("published_topics/flir_gray16_image_topic", gray16Topic_,
                              "flir_lepton/image/gray16");
+
+      nh_.param<std::string>("published_topics/bbb_adc_topic", adcTopic_,
+                             "flir_lepton/adc/voltage0");
 
       nh_.param<std::string>("published_topics/flir_rgb_image_topic", rgbTopic_,
         "flir_lepton/image/rgb");
@@ -288,6 +295,7 @@ namespace flir_lepton
       if(pub16Gray_)
         {
           gray16Publisher_.publish(gray16MSG_.toImageMsg());
+          adcPublisher_.publish(adcMSG_);
         }
 
       if(pubRgb_)
@@ -297,6 +305,26 @@ namespace flir_lepton
       temperPublisher_.publish(temperMsg_);
       batchPublisher_.publish(batchMsg_);
       /* ------------------------------------ */
+    }
+
+    // custom adc reader
+    void FlirLeptonHWIface::read_adc(int fd)
+    {
+      char adc[5] = {0};
+      int len = read(fd, adc, sizeof(adc - 1));
+      if(len == -1){
+        ROS_INFO("error: %s\n", strerror(errno));
+        exit(1);
+      }
+      else if(len == 0){
+        ROS_INFO("%s\n", "buffer is empty");
+      }
+      else{
+        adc[len] ='\0';
+        // ROS_INFO("%s ", adc);
+
+        adcMSG_.temperature = atof(adc);
+      }
     }
 
 
@@ -325,6 +353,19 @@ namespace flir_lepton
         begin = boost::posix_time::microsec_clock::local_time();
         try
         {
+
+
+          // custom ADC
+          // grab ADC0 right before camera integration
+          int fd = open(fname, O_RDONLY);
+          if(fd == -1){
+            ROS_INFO("error: %s\n", strerror(errno));
+            exit(1);
+          }
+          read_adc(fd);
+          close(fd);
+          //
+
           restarts = 0;
           for (uint16_t i = 0; i < packetsPerFrame; i++)
           {
@@ -370,6 +411,9 @@ namespace flir_lepton
           uint16_t cleanDataCount = 0;
           maxVal = 0;
           minVal = -1;
+
+
+
 
           // Process this acquired from spi port, frame and create the data vector
           for (int i = 0; i < frameSize16; i++)
@@ -542,6 +586,7 @@ namespace flir_lepton
       //custom data header
       gray16MSG_.image =  gray16Image_;
       gray16MSG_.header.stamp = now_;
+      adcMSG_.header.stamp = now_;
 
       rgbImage_.header.stamp = now_;
       temperMsg_.header.stamp = now_;
