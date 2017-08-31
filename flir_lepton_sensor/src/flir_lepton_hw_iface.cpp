@@ -321,7 +321,7 @@ namespace flir_lepton
       }
       else{
         adc[len] ='\0';
-        ROS_INFO("%s ", adc);
+        // ROS_INFO("%s ", adc);
 
         adcMSG_.temperature = atof(adc);
       }
